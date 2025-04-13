@@ -1,5 +1,5 @@
 {
-    "packageName": "com.zeprus.test",
-    "name": "test_script_1",
+    "packageName": "com.zeprus.example",
+    "name": "example_script_1",
     "content": "import frida, sys; jsContent = \"Java.perform(() => { const ExampleClass = Java.use('com.zeprus.test.ExampleClass'); const getText = ExampleClass.getText; getText.implementation = function () {}; });\" process = frida.get_usb_device().attach('com.zeprus.test'); script = process.create_script(jsContent); script.load();"
 }

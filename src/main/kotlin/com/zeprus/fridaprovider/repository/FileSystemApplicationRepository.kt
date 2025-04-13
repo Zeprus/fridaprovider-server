@@ -12,8 +12,6 @@ import java.io.FileOutputStream
 
 @Repository
 class FileSystemApplicationRepository : ApplicationRepository<Application> {
-    //TODO: Refresh (Filewatcher? Event?)
-
     @Value("\${fridaprovider.repositoryPath}")
     private lateinit var repositoryPath: String
     private lateinit var directory: File
@@ -22,6 +20,10 @@ class FileSystemApplicationRepository : ApplicationRepository<Application> {
     @PostConstruct
     fun init() {
         directory = File(repositoryPath)
+        applications = load()
+    }
+
+    fun refresh() {
         applications = load()
     }
 
@@ -90,6 +92,9 @@ class FileSystemApplicationRepository : ApplicationRepository<Application> {
         val scriptFile = File(appDir, "${script.name}.json")
         val mapper = jacksonObjectMapper()
         mapper.writeValue(FileOutputStream(scriptFile), script)
+        if(applications.find { app -> app.applicationInfo.packageName == script.packageName }?.addScript(script) == null) {
+            applications.add(Application(ApplicationInfo(script.packageName)).addScript(script))
+        }
     }
 
     override fun get(applicationInfo: ApplicationInfo): Application? {
